@@ -59,7 +59,8 @@ on each channel:
 The EV3 python script is available [here](https://github.com/JorgePe/EV3-Pybricks-Messaging/blob/main/test-bleak-v4.py).
 
 not yet perfect: I need to find a way of clearing cached messages when switching channels -
-you can see in the video, when returning to channel 1, that some previous messages were
-read instead of discarded.
+you can see in the video, the first time I return to channel 1, that 5 previous messages were
+read instead of discarded. The second time I return to channel 1 there were no messages
+in cache because I didn't wait so much on the other channels.
 
 
