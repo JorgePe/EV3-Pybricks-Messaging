@@ -75,6 +75,48 @@ All the advertisement commands needed are from the OGF 8 ("LE Only Commands"):
 - OCF 08 for LE Set Advertising Data
 - OCF 10 for LE Set Advertise Enable
 
+### hcitool
+
+ev3dev linux has several Bluez tools, I use 'hcitool' to issue HCI commands:
+
+```
+robot@ev3dev:~$ hcitool
+hcitool - HCI Tool ver 5.50
+Usage:
+	hcitool [options] <command> [command parameters]
+```
+
+```
+robot@ev3dev:~$ hcitool -i hci1 cmd
+cmd: too few arguments (minimal: 2)
+Usage:
+	cmd <ogf> <ocf> [parameters]
+```
+
+So to set LE Advertising Parameters for the Pybricks specs:
+
+```
+hcitool -i hci1 cmd 0x08 0x0006 A0 00 A0 00 03 00 00 00 00 00 00 00 00 07 02
+```
+
+This set the Min and Max Advertisement Interval as 140 (A0 00 = 0x00A0 = 140)
+unities of time. In bluetooth each unit of time is 0.625 ms we need 140
+to achieve 100 ms.
+
+03 sets a group of flags required for ADV_NONCONN_IND and 07 activates the 3
+radio channels used by Bluetooth.
+
+Actually I am using a slightly different command to relicate the behavior I
+see when using Nordic nRF Connect tool onmy Android phone to scan Pybricks
+hubs:
+
+```
+hcitool -i hci1 cmd 0x08 0x0006 35 00 35 00 00 00 00 00 00 00 00 00 00 07 02
+```
+(33 ms instead of 100 ms and ADV_IND instead of ADV_NONCONN_IND)
+
+But both commands seem to work fine.
+
 
 ## Observing (i.e. receiving)
 
