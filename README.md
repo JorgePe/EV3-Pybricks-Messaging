@@ -1,7 +1,7 @@
 # EV3-Pybricks-Messaging
 My attempts to use LEGO MINDSORMS EV3 to communicate with Pybricks messaging protocol
 
-# WARNING: this is still very incomplete, as I an still reviewing my notes
+# WARNING: this is still very incomplete, as I am still reviewing my notes
 
 ## Intro
 
