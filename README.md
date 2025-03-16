@@ -133,7 +133,19 @@ this will be the required 32-byte payload:
 
 "08 07 FF 97 03 01 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
 
-The firt byte (08) defines the real length of the paylod (8 bytes=
+The firt byte (08) defines the real length of the advertisement data (8 bytes, all the rest is
+just padding zeros).
+
+From now on it will be per Pybricks definition:
+
+07 FF 97 03 01 00 20
+
+The first byte is also a length: 7 bytes
+The second byte indicates Manufacturer Data (one the serveral types of BLE Advertisements)
+The third and fourth bytes are the Company Identifier (0x0397 = 919 is from LEGO)
+The fifth byte is the channel id (01)
+The sixth byte means 'SINGLE_OBJECT'
+The seventh byte means the object is of type 'Bool' and it is 'True'
 
 
 ## Observing (i.e. receiving)
