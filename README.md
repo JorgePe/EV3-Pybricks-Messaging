@@ -163,8 +163,11 @@ the advertisement with another OCF 0x0A command:
 hcitool -i hci1 cmd 0x08 0x000a 00
 ```
 
+Nordic nRF Connect App will show:
 
+<img src="https://github.com/JorgePe/EV3-Pybricks-Messaging/blob/main/brodcast_ch1_True.jpeg" width=250>
 
+The value of "Manufacturer Data" is 0x01002000
 
 ## Observing (i.e. receiving)
 
