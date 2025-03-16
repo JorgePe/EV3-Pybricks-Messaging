@@ -212,6 +212,14 @@ but this leaves just 11 bytes. Not a problema for most SINGLE_OBJECT data types 
 just 4 bytes) but string-type or bytes-type values will need to be kept shorter than 12 bytes. Not much
 for a string value.
 
+I tested with Pybricks IDE and the maximum string size allowed to be broadcasted was 24. With a
+25-char string I got:
+
+```
+ValueError: payload limited to 26 bytes
+```
+
+So Pybricks is using a better way to advertise 'Complete Local Name' and 'Manufacturer Data'.
 
 The value of "Manufacturer Data" is the same for both advertisements: 0x010020
 (and, of course, if I use a LEGO Hub to observe on channel 1 I receive a
