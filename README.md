@@ -195,8 +195,23 @@ I did find a way to advertise 'Complete Local Name':
 ```
 hcitool -i hci1 cmd 0x08 0x0008 0d 0c 09 50 79 62 72 69 63 6b 73 45 56 33 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 ```
-but this replaces the 'Manufacturer Data' command so until I find a proper way
-will have to live with a 10-char shortened name ('PybricksEV' instead of 'PybricksEV3')
+but this replaces the 'Manufacturer Data' command.
+To advertise both types I need to use mix both advertisements in just one:
+
+```
+hcitool -i hci1 cmd 0x08 0x0008 14 06 FF 97 03 01 00 20 0c 09 50 79 62 72 69 63 6b 73 45 56 33 00 00 00 00 00 00 00 00 00 00 00
+```
+
+'14' is the total payload size (20 bytes)
+
+'6 FF 97 03 01 00 20' is the same Manufacturer Data advertisement ('FF' is the Manufacturer Data type)
+
+'0c 09 50 79 62 72 69 63 6b 73 45 56 33' is the 'Complete Local Name' advertisement ('09' is the type)
+
+but this leaves just 11 bytes. Not a problema for most SINGLE_OBJECT data types (Long Int or Float use
+just 4 bytes) but string-type or bytes-type values will need to be kept shorter than 12 bytes. Not much
+for a string value.
+
 
 The value of "Manufacturer Data" is the same for both advertisements: 0x010020
 (and, of course, if I use a LEGO Hub to observe on channel 1 I receive a
