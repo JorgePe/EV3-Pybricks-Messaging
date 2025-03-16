@@ -1,6 +1,7 @@
 # EV3-Pybricks-Messaging
 My attempts to use LEGO MINDSORMS EV3 to communicate with Pybricks messaging protocol
 
+# WARNING: this is still very incomplete, as I an still reviewing my notes
 
 ## Intro
 
@@ -27,8 +28,53 @@ something reasonably useful.
 
 ## Broadcasting (i.e. sending)
 
-This is somewhat easy with just some system calls to linux bluez commands [will document it
-later].
+This is somewhat easy with just some system calls to linux bluez commands.
+It will probably work much better with higher level mechanisms that use Dbus to interface
+with the Bluez API - but I don't know how to do it and didn't find any proper python
+library.
+
+### HCI
+
+Host Controller Interface (HCI) is a standard for Bluetooth (BT) communication.
+
+The MINDSTORMS EV3 already has an internal HCI device but unfortunately it's very
+old and only supports BT 2.x so it does not support the Bluetooth Low Energy (BLE)
+features that were introduced with BT 4.0 version.
+
+When using ev3dev linux, this HCI device is identified as 'hci0'.
+
+We need a USB BT 4.0 or higher dongle that suuports BLE. ev3dev will recognize
+most of the dongles available in the market but for this purpose best option is
+using one with a Cambridge Silicon Radio (CSR) chipset.
+
+If ev3dev supports your dongle it will show in dmesg:
+
+It will also show in 'hciconfig':
+
+In the past, linux sometimes switched the 'hci' order at startup so sometimes the
+USB device would be 'hci1' and sometimes 'hci0'. I am not seeing that happen
+with my current ev3dev versions but I am not yet 100% sure that we can
+always assume 'hci1' for the USB dongle so it's better to check.
+
+### HCI commands
+
+The HCI standard implements several commands. These are grouped in Opcode Groups
+and each Opcode Group has a set of Opcode Commands. So a command have two parts or
+fields: a OGF and a OCF.
+
+Pybricks protocol states:
+
+    Advertisements should be sent using a 100ms interval.
+    Advertisements should be sent on all 3 radio channels.
+    Advertisements should be sent using advertising data type of ADV_NONCONN_IND (undirected, not scannable, not connectable).
+    Payload must contain only one advertisement data structure with type of Manufacturer Specific Data (0xFF).
+    Manufacturer Specific Data must use LEGO company identifier (0x0397).
+
+All the advertisement commands needed are from the OGF 8 ("LE Only Commands"):
+- OCF 06 for LE Set Advertising Parameters
+- OCF 08 for LE Set Advertising Data
+- OCF 10 for LE Set Advertise Enable
+
 
 ## Observing (i.e. receiving)
 
