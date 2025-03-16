@@ -93,7 +93,8 @@ Usage:
 	cmd <ogf> <ocf> [parameters]
 ```
 
-So to set LE Advertising Parameters for the Pybricks specs:
+So to set LE Advertising Parameters for the Pybricks specs we use
+OGF 0x08 and OCF 0x0006:
 
 ```
 hcitool -i hci1 cmd 0x08 0x0006 A0 00 A0 00 03 00 00 00 00 00 00 00 00 07 02
@@ -116,6 +117,23 @@ hcitool -i hci1 cmd 0x08 0x0006 35 00 35 00 00 00 00 00 00 00 00 00 00 07 02
 (33 ms instead of 100 ms and ADV_IND instead of ADV_NONCONN_IND)
 
 But both commands seem to work fine.
+
+Now for the actual payload of each advertisement we use
+OGF 0x08 and OCF 0x0008:
+
+```
+hcitool -i hci1 cmd 0x08 0x0008 payload
+```
+
+As an example of a payload, if we want so send just "True' on channel 1
+
+i.e. hub.ble.broadcast(True)
+
+this will be the required 32-byte payload:
+
+"08 07 FF 97 03 01 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
+
+The firt byte (08) defines the real length of the paylod (8 bytes=
 
 
 ## Observing (i.e. receiving)
