@@ -191,8 +191,12 @@ hciconfig -a hci1 down
 hciconfig -a hci1 up
 ```
 
-(I didn't find yet a way to set 'Complete Local Name' so I have to
-live with a 10-char shortened name ('PybricksEV' instead of 'PybricksEV3')
+I did find a way to advertise 'Complete Local Name':
+```
+hcitool -i hci1 cmd 0x08 0x0008 0d 0c 09 50 79 62 72 69 63 6b 73 45 56 33 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+```
+but this replaces the 'Manufacturer Data' command so until I find a proper way
+will have to live with a 10-char shortened name ('PybricksEV' instead of 'PybricksEV3')
 
 The value of "Manufacturer Data" is the same for both advertisements: 0x010020
 (and, of course, if I use a LEGO Hub to observe on channel 1 I receive a
