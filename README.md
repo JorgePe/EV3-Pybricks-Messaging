@@ -100,7 +100,7 @@ OGF 0x08 and OCF 0x0006:
 hcitool -i hci1 cmd 0x08 0x0006 A0 00 A0 00 03 00 00 00 00 00 00 00 00 07 02
 ```
 
-This set the Min and Max Advertisement Interval as 140 (A0 00 = 0x00A0 = 140)
+This sets the Min and Max Advertisement Interval as 140 (A0 00 = 0x00A0 = 140)
 unities of time. In bluetooth each unit of time is 0.625 ms we need 140
 to achieve 100 ms.
 
@@ -129,23 +129,41 @@ As an example of a payload, if we want so send just "True' on channel 1
 
 i.e. hub.ble.broadcast(True)
 
-this will be the required 32-byte payload:
+this will be the required 32-byte payload for the HCI "LE Set Advertising Data"
+command:
 
 "08 07 FF 97 03 01 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
 
 The firt byte (08) defines the real length of the advertisement data (8 bytes, all the rest is
 just padding zeros).
 
-From now on it will be per Pybricks definition:
+From the second byte onward we follow Pybricks definition:
 
 07 FF 97 03 01 00 20
 
 The first byte is also a length: 7 bytes
-The second byte indicates Manufacturer Data (one the serveral types of BLE Advertisements)
+The second byte indicateswe will be advertising "Manufacturer Data" (one of the
+several types of BLE Advertisements)
 The third and fourth bytes are the Company Identifier (0x0397 = 919 is from LEGO)
 The fifth byte is the channel id (01)
 The sixth byte means 'SINGLE_OBJECT'
 The seventh byte means the object is of type 'Bool' and it is 'True'
+
+And finally to initiate the advertisement we issue a OCF 0x0A command:
+
+```
+hcitool -i hci1 cmd 0x08 0x000a 01
+```
+
+From now on the MINDSTORMS EV3 will be advertising Manufacturer Data with the LEGO
+Company Identifier and the Pybricks message every 100 ms until we terminate
+the advertisement with another OCF 0x0A command:
+
+```
+hcitool -i hci1 cmd 0x08 0x000a 00
+```
+
+
 
 
 ## Observing (i.e. receiving)
