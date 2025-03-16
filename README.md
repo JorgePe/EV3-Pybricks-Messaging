@@ -132,17 +132,17 @@ i.e. hub.ble.broadcast(True)
 this will be the required 32-byte payload for the HCI "LE Set Advertising Data"
 command:
 
-"08 07 FF 97 03 01 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
+"08 06 FF 97 03 01 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
 
 The firt byte (08) defines the real length of the advertisement data (8 bytes, all the rest is
 just padding zeros).
 
 From the second byte onward we follow Pybricks definition:
 
-07 FF 97 03 01 00 20
+06 FF 97 03 01 00 20
 
-The first byte is also a length: 7 bytes
-The second byte indicateswe will be advertising "Manufacturer Data" (one of the
+The first byte is also a length: 6 bytes will follow
+The second byte indicates we will be advertising "Manufacturer Data" (one of the
 several types of BLE Advertisements)
 The third and fourth bytes are the Company Identifier (0x0397 = 919 is from LEGO)
 The fifth byte is the channel id (01)
@@ -163,11 +163,41 @@ the advertisement with another OCF 0x0A command:
 hcitool -i hci1 cmd 0x08 0x000a 00
 ```
 
-Nordic nRF Connect App will show:
+When my MINDSTORMS EV3 is advertising like this and a LEGO Technic Hub is also
+advertising 'True' I get this with Nordic nRF Connect App:
 
 <img src="https://github.com/JorgePe/EV3-Pybricks-Messaging/blob/main/brodcast_ch1_True.jpeg" width=250>
 
-The value of "Manufacturer Data" is 0x01002000
+'PybricksGP4' is the name I chose when I installed Pybricks firmware on the Technic Hub.
+'PybricksEV' is the 'Shortened Local Name' I gave to my EV3 hci1 device (you can do that with 
+
+```
+sudo btmgmt --index 1
+[hci1] name PybricksEV3
+[hci1] exit
+```
+
+or with
+
+```
+hcitool -i hci1 cmd 0x03 0x0013 50 79 62 72 69 63 6B 73 45 56 33
+```
+
+but it only works after restarting bluetooth service or restarting
+hci1 with
+
+```
+hciconfig -a hci1 down
+hciconfig -a hci1 up
+```
+
+(I didn't find yet a way to set 'Complete Local Name' so I have to
+live with a 10-char shortened name ('PybricksEV' instead of 'PybricksEV3')
+
+The value of "Manufacturer Data" is the same for both advertisements: 0x010020
+(and, of course, if I use a LEGO Hub to observe on channel 1 I receive a
+'True' from both)
+
 
 ## Observing (i.e. receiving)
 
