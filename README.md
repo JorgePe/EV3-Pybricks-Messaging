@@ -318,7 +318,11 @@ With a 25-char string I got:
 ValueError: payload limited to 26 bytes
 ```
 
-So Pybricks is using a better way to advertise 'Complete Local Name' and 'Manufacturer Data'.
+So Pybricks is using a better way to advertise 'Complete Local Name' and
+'Manufacturer Data'.
+
+Following a suggestion I found, I tried advertising one then the other but Nordic
+nRF Connect keeps showing one then the other - not mixing both in one.
 
 Perhaps the STM microcontroller allows several simultaneous advertisements?
 
