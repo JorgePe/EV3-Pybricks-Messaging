@@ -307,7 +307,7 @@ Manufacturer Data type)
 - '0c 09 50 79 62 72 69 63 6b 73 45 56 33' is the 'Complete Local Name' advertisement
 ('09' is the type)
 
-but this leaves just 11 bytes more. Not a problema for most SINGLE_OBJECT data types
+but this leaves just 11 bytes more. Not a problem for most SINGLE_OBJECT data types
 (Long Int or Float use just 4 bytes) but string-type or bytes-type values will need
 to be kept shorter than 12 bytes. Not much for a string value.
 
@@ -326,6 +326,32 @@ nRF Connect keeps showing one then the other - not mixing both in one.
 
 Perhaps the STM microcontroller allows several simultaneous advertisements?
 
+Nope. Much simpler than that: 'Complete Local Name' is not being advertised
+at all. It is defined as a 'Scan Response'.
+
+Don't know yet how to do it with 'hcitool' but I can do it with 'btmgmt', another
+tool from Bluez (also deprecated, also using version 5.50 with my EV3)
+
+```
+robot@ev3dev:~$ sudo btmgmt --index 1 add-adv -s 0c095079627269636b73455633 1
+Instance added: 1
+```
+
+Since I don't need to advertise 'Complete Local Name', I have the whole 24-bytes
+available for Pybricks variables, like a 24-chr string:
+
+<img src="https://github.com/JorgePe/EV3-Pybricks-Messaging/blob/main/brodcast_ch1_24c_string.jpeg" width=250>
+
+After finding the EV3, the scanner (in this case the Nordic nRF Connect App) asks 
+EV3 for more details and that's when it gets the 'Complete Local Name'
+
+0c 09 5079627269636b73455633
+
+- '0C' is the total length (12 bytes)
+- '09' means 'Complete Local Name'
+- '5079627269636b73455633' = "PybricksEV3"
+
+  
 
 ## Observing (i.e. receiving)
 
