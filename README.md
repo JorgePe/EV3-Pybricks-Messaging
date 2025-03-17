@@ -23,30 +23,38 @@ The stubborn way: use just the EV3 and a USB BT dongle that supports BLE. It's p
 
 ## Limitations
 
-ev3dev is based on a now obsolet Debian version for a CPU archtecture (armel) no longer
-supported, so keeping up with modern python libraries is at least very difficult if
-not impossible. And some of the first python BLE libraries I've used (mostly with SBricks
-and WeDo 2.0) seem to be no longer mantained.
+[ev3dev](https://www.ev3dev.org/) is based on a now obsolet Debian version for a CPU
+architecture (armel) no longer supported, so keeping up with modern python libraries is
+at least very difficult if not impossible. And some of the first python BLE libraries
+I've used (mostly with SBricks and WeDo 2.0) seem to be no longer mantained.
 
-So I had to try a lot of different approaches until I got something reasonably useful.
+So I tried several different approaches until I got something reasonably useful. And even
+so, I don't have a unified solution - I am now using system calls for broadcasting and 
+a python library (Bleak) for observing.
+
+But at least it is possible.
 
 
 ## Achievements
 
 - broadcasting (i.e. sending) is working fine
-- observing (i.e receiving) is working but not yet as I desire
+- observing (i.e receiving) is working - but not yet as I desire
 
 Broadcasting is somewhat easy with just some system calls to linux Bluez commands.
+
 It will probably work much better with higher level mechanisms that use DBus to interface
 with the Bluez API - but I don't know how to do it and didn't find any proper python
 library.
 
 Observing is more demanding. It might be possible also with system calls but I could not
-achieve good results for more than just a few seconds. I tried DBus directly but I do not
-understand enough of it so I had to use python with some library. I found several examples
-with pydbus, got some results but also for just a short duration.
+achieve good results for more than just a few seconds (using python 'pexpect' to interact
+with Bluez 'bluetootctl').
 
-I am now using Bleak with better results. More of it later.
+I also tried DBus directly but I do not understand enough of it so I had to try python
+with some Dbus library. I found several examples with pydbus and got some results but
+also for just a short duration.
+
+I am now using Bleak (and dbus-fast) with much better results. More about that later.
 
 
 ## Some boring technical background
@@ -106,8 +114,8 @@ hci0:	Type: Primary  Bus: UART
 	Link mode: SLAVE ACCEPT
 ```
 
-In the past, linux sometimes switched the 'hci' order at startup and the
-USB device could be 'hci0' instead of 'hci1'. I am not seeing that happen
+In the past, linux sometimes switched the 'hci' device order at startup and
+the USB device could be 'hci0' instead of 'hci1'. I am not seeing that happen
 with my current ev3dev versions but I am not yet 100% sure that we can
 always assume 'hci1' for the USB dongle so it's better to check (if
 using 'hciconfig -a', the internal hci device will always be the one
@@ -116,7 +124,7 @@ with 'Bus: UART' and the external hci device the one with 'Bus: USB')
 
 ### HCI commands
 
-The HCI standard implements several commands. These are grouped in Opcode Groups
+The HCI standard implements several commands. Those are grouped in Opcode Groups
 and each Opcode Group has a set of Opcode Commands. So a command have two parts or
 fields: a OGF and a OCF.
 
@@ -134,6 +142,12 @@ OGF 8 ("LE Only Commands"):
 - OCF 06 for LE Set Advertising Parameters
 - OCF 08 for LE Set Advertising Data
 - OCF 10 for LE Set Advertise Enable
+
+So broadcasting (i.e. advertising) is possible with just a small set
+of HCI commands. And the best part is this commands being essentially
+the same needed to implement a BLE beacon (Pybricks protocol is indeed
+just a particular implementation of a beacon) and there are several
+examples of doing it with a Raspberry Pi or a linux laptop.
 
 
 ### hcitool
@@ -154,21 +168,23 @@ Usage:
 	cmd <ogf> <ocf> [parameters]
 ```
 
-it's an old version (my Ubuntu with Bluez 5.72 has also a 5.72 version). Although it
-is possible to build and install Bluez 5.72 on ev3dev it will not install hcitool
-unless you chose to build deprecated tools.
+it's an old version (my Ubuntu with Bluez 5.72 has a 5.72 version and there
+are several later versions). Although it is possible to build and install
+Bluez 5.72 on ev3dev it will not install hcitool unless you chose to also
+build the deprecated tools.
 
-After hcitool has been deprecated, few (if any) changes have been made and I didn't
-find anything suggesting I would benefit from a recent version so I am still using
-this one.
+But since after hcitool has been deprecated few (if any) changes have been
+made and I didn't find anything suggesting I would benefit from a recent
+version I am still using this old one (5.50).
 
-hcitool requires root permission to be used. To avoid using 'sudo' and also allow
-using it in my scripts I removed this need:
+hcitool requires root permission to be used. To avoid using 'sudo' and also
+allow using it in my scripts I removed this need:
 
 ```
 sudo setcap cap_net_raw+ep /usr/bin/hcitool
 ```
 
+## Broadcasting
 
 ### Set LE Advertising Parameters
 
