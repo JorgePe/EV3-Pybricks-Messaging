@@ -365,6 +365,29 @@ We can remove the requirement for sudo permissions on 'btmgmt' with
 sudo setcap 'cap_net_raw,cap_net_admin+eip' /usr/bin/btmgmt
 ```
 
+### A whole implementation
+
+
+This [script](https://github.com/JorgePe/EV3-Pybricks-Messaging/blob/main/broadcaster.py)
+makes use of hcitool to broadcast BLE messages in Pybricks format.
+
+It fully implements the protocol so it can use single values or tuples with any combination
+of all the supported types (as long as the total payload is lower than 25 bytes).
+
+When setting a Scan Response with the Complete Local Name I am having problems and cannot
+stop advertisements with hcitool. Removing the Scan Response fixes it but if I set again
+a Scan Response it will create a new BT address. So if using a Scanner App like Nordic
+nRF Connect there will appear several instances of the device, one for each address.
+
+Until I found a proper way to deal with this I will use Complete Local Name response
+only when I need to some nice screenshots :D
+
+Please note that the script doesn't validate the lenght of string or bytes values
+and also doesn't check the final length of a combination of several values (for example
+while a 24-char string is supported, a tupple of two 12-char strings will break because
+of the overhead of representing two values instead of a SINGLE_OBJECT)
+
+
 ## Observing (i.e. receiving)
 
 This is almost impossible with just system calls to linux bluez commands. The best I could
