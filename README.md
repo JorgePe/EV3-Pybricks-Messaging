@@ -162,6 +162,14 @@ After hcitool has been deprecated, few (if any) changes have been made and I did
 find anything suggesting I would benefit from a recent version so I am still using
 this one.
 
+hcitool requires root permission to be used. To avoid using 'sudo' and also allow
+using it in my scripts I removed this need:
+
+```
+sudo setcap cap_net_raw+ep /usr/bin/hcitool
+```
+
+
 ### Set LE Advertising Parameters
 
     Advertisements should be sent using a 100ms interval.
@@ -351,7 +359,11 @@ EV3 for more details and that's when it gets the 'Complete Local Name'
 - '09' means 'Complete Local Name'
 - '5079627269636b73455633' = "PybricksEV3"
 
-  
+We can remove the requirement for sudo permissions on 'btmgmt' with
+
+```
+sudo setcap 'cap_net_raw,cap_net_admin+eip' /usr/bin/btmgmt
+```
 
 ## Observing (i.e. receiving)
 
