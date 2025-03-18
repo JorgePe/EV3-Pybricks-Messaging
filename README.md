@@ -403,6 +403,11 @@ and also doesn't check the final length of a combination of several values (for 
 while a 24-char string is supported, a tupple of two 12-char strings will break because
 of the overhead of representing two values instead of a SINGLE_OBJECT)
 
+An example of the script above with my EV3 controlling a Pybricks [StarterBot](https://pybricks.com/learn/building-a-robot/)
+through hand claps and whistles (thanks to an old MINDSTORMS NXT sound sensor - 3 generations
+in the same video :D )
+
+[![Pybricks StarterBot remote controlled with hand claps/whistles](http://img.youtube.com/vi/qCcJQUrwS6E/0.jpg)](https://youtu.be/qCcJQUrwS6E "Pybricks StarterBot remote controlled with hand claps/whistles")
 
 ## Observing (i.e. receiving)
 
